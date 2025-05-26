@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Location Request</title>
+</head>
+<body>
+  <h2>Please share your location</h2>
+  <button onclick="getLocation()">Share Location</button>
+  <p id="status"></p>
+  <p id="coords"></p>
+
+  <script>
+    function getLocation() {
+      const status = document.getElementById('status');
+      const coords = document.getElementById('coords');
+
+      if (!navigator.geolocation) {
+        status.textContent = 'Geolocation is not supported by your browser';
+      } else {
+        status.textContent = 'Locating…';
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            status.textContent = 'Location found:';
+            coords.textContent = `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
+            // You can send this data to your server here if you want
+          },
+          () => {
+            status.textContent = 'Unable to retrieve your location';
+          }
+        );
+      }
+    }
+  </script>
+</body>
+</html>
