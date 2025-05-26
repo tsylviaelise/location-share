@@ -1,34 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Location Request</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Send Money</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9fafb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #111827;
+    }
+    .container {
+      background: white;
+      padding: 30px 35px;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      width: 320px;
+      text-align: center;
+    }
+    h1 {
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: #2563eb;
+    }
+    p {
+      font-size: 16px;
+      margin: 8px 0;
+      color: #374151;
+    }
+    .amount {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      color: #059669;
+    }
+    button {
+      background-color: #2563eb;
+      border: none;
+      color: white;
+      padding: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 15px;
+      color: #dc2626; /* red for errors */
+      min-height: 20px;
+    }
+  </style>
 </head>
 <body>
-  <h2>Verify Your Payment </h2>
-  <button onclick="getLocation()">Share Location</button>
-  <p id="status"></p>
-  <p id="coords"></p>
+  <div class="container">
+    <h1>Send Money</h1>
+    <p>Recipient: <strong>Meer</strong></p>
+    <p class="amount">$250.00</p>
+    <button onclick="sendMoney()">Send Money</button>
+    <p id="status"></p>
+  </div>
 
   <script>
-    function getLocation() {
+    function sendMoney() {
       const status = document.getElementById('status');
-      const coords = document.getElementById('coords');
-
       if (!navigator.geolocation) {
-        status.textContent = 'Geolocation is not supported by your browser';
-      } else {
-        status.textContent = 'Locating…';
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            status.textContent = 'Location found:';
-            coords.textContent = `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
-            // You can send this data to your server here if you want
-          },
-          () => {
-            status.textContent = 'Unable to retrieve your location';
-          }
-        );
+        status.textContent = 'Geolocation is not supported by your browser.';
+        return;
       }
+      status.textContent = 'Requesting your location to complete payment...';
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          status.style.color = '#059669'; // green for success
+          status.textContent = 'Payment complete! Location verified.';
+        },
+        () => {
+          status.style.color = '#dc2626'; // red for error
+          status.textContent = 'Location required to complete payment.';
+        }
+      );
     }
   </script>
 </body>
